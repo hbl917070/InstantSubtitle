@@ -1,0 +1,17 @@
+.vs/
+InstantSubtitle/obj/
+InstantSubtitle/bin/Release/
+
+InstantSubtitle.v12.suo
+
+InstantSubtitle/bin/Debug/即時字幕.pdb
+InstantSubtitle/bin/Debug/data/Background.jpg
+InstantSubtitle/bin/Debug/data/setting-preset.xml
+InstantSubtitle/bin/Debug/data/setting.xml
+InstantSubtitle/bin/Debug/1.mp3
+InstantSubtitle/bin/Debug/2.wav
+InstantSubtitle/bin/Debug/1.wav
+InstantSubtitle/bin/Debug/即時字幕.vshost.exe
+InstantSubtitle/bin/Debug/即時字幕.vshost.exe.config
+InstantSubtitle/bin/Debug/即時字幕.vshost.exe.manifest
+

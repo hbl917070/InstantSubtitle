@@ -1,0 +1,62 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:InstantSubtitle"
+        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="InstantSubtitle.W_print"
+        Title="W_print"
+        Topmost="True"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        SizeToContent="Height"
+        Height="115.5"
+        Width="253.5"
+        Background="{x:Null}"
+        Cursor="ScrollAll">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="98*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="bc"
+              Background="#FFC68484"
+              Grid.Column="1"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Left">
+            <local:OutlinedTextBlock x:Name="lable_print"
+                                     FontSize="40"
+                                     Fill="White"
+                                     Stroke="#FF553535"
+                                     Text="~~~~~字幕~~~~~"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     TextWrapping="WrapWithOverflow"
+                                     Margin="8"
+                                     StrokeThickness="10">
+                <local:OutlinedTextBlock.Effect>
+                    <BlurEffect x:Name="BlurEffect_模糊"
+                                Radius="10.2" />
+                </local:OutlinedTextBlock.Effect>
+            </local:OutlinedTextBlock>
+            <local:OutlinedTextBlock Text="{Binding Text, ElementName=lable_print}"
+                                     FontWeight="{Binding FontWeight, ElementName=lable_print}"
+                                     HorizontalAlignment="{Binding HorizontalAlignment, ElementName=lable_print}"
+                                     VerticalAlignment="{Binding VerticalAlignment, ElementName=lable_print}"
+                                     TextWrapping="{Binding TextWrapping, ElementName=lable_print}"
+                                     FontSize="{Binding FontSize, ElementName=lable_print}"
+                                     Fill="{Binding Fill, ElementName=lable_print}"
+                                     FontFamily="{Binding FontFamily, ElementName=lable_print}"
+                                     Margin="{Binding Margin, ElementName=lable_print}"
+                                     TextAlignment="{Binding TextAlignment, ElementName=lable_print}"
+                                     Panel.ZIndex="81000"
+                                     StrokeThickness="0" />
+        </Grid>
+    </Grid>
+</Window>

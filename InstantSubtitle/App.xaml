@@ -1,0 +1,20 @@
+﻿<Application x:Class="InstantSubtitle.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="style/style_property.xaml"/>
+                <ResourceDictionary Source="style/style_1.xaml"/>
+                
+                <ResourceDictionary Source="style/style_button.xaml"/>
+                <ResourceDictionary Source="style/Simple Styles.xaml"/>
+
+                <ResourceDictionary Source="style/style_window_播放模式.xaml" />
+                
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
