@@ -1,7 +1,5 @@
 ﻿using ColorPicker;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -26,8 +24,8 @@ namespace InstantSubtitle {
         /// </summary>
         public void SaveSetting() {
 
-            Func<Color, String> getColor = new Func<Color, String>((Color co) => {
-                return co.A + "," + co.R + "," + co.G + "," + co.B;
+            Func<Color, String> getColor = new Func<Color, String>((Color col) => {
+                return col.A + "," + col.R + "," + col.G + "," + col.B;
             });
 
             Action<XmlTextWriter, String, String> writeItem = new Action<XmlTextWriter, String, String>(
@@ -38,44 +36,44 @@ namespace InstantSubtitle {
                         XTW.WriteEndElement();
                     });
 
-            XmlTextWriter X = new XmlTextWriter(pathXml, Encoding.UTF8);
+            XmlTextWriter x = new XmlTextWriter(pathXml, Encoding.UTF8);
 
 
-            X.WriteStartDocument(); //使用1.0版本
-            X.Formatting = Formatting.Indented; //自動縮排
-            X.Indentation = 2; //縮排距離
+            x.WriteStartDocument(); //使用1.0版本
+            x.Formatting = Formatting.Indented; //自動縮排
+            x.Indentation = 2; //縮排距離
 
-            X.WriteStartElement("settings");
+            x.WriteStartElement("settings");
 
             //
-            writeItem(X, m.checkBox_播放聲音.Name, m.checkBox_播放聲音.IsChecked.Value.ToString());//
-            writeItem(X, m.checkBox_顯示字幕.Name, m.checkBox_顯示字幕.IsChecked.Value.ToString());//
-            writeItem(X, m.checkBox_雙擊置中.Name, m.checkBox_雙擊置中.IsChecked.Value.ToString());//
-            writeItem(X, m.textBox_上一句快速鍵.Name, m.textBox_上一句快速鍵.Text);//
-            writeItem(X, m.textBox_下一句快速鍵.Name, m.textBox_下一句快速鍵.Text);//
-            writeItem(X, m.textBox_文字大小.Name, m.textBox_文字大小.Text);//
-            writeItem(X, m.textBox_朗讀速度.Name, m.textBox_朗讀速度.Text);//
-            writeItem(X, m.textBox_聲音大小.Name, m.textBox_聲音大小.Text);//
-            writeItem(X, m.textBox_背景圖.Name, m.textBox_背景圖.Text);//
-            writeItem(X, m.textBox_外框寬度.Name, m.textBox_外框寬度.Text);//
-            writeItem(X, m.textBox_外框_羽化.Name, m.textBox_外框_羽化.Text);//
-            writeItem(X, m.textBox_字幕最大寬度.Name, m.textBox_字幕最大寬度.Text);//
+            writeItem(x, m.checkBox_播放聲音.Name, m.checkBox_播放聲音.IsChecked.Value.ToString()); //
+            writeItem(x, m.checkBox_顯示字幕.Name, m.checkBox_顯示字幕.IsChecked.Value.ToString()); //
+            writeItem(x, m.checkBox_雙擊置中.Name, m.checkBox_雙擊置中.IsChecked.Value.ToString()); //
+            writeItem(x, m.textBox_上一句快速鍵.Name, m.textBox_上一句快速鍵.Text); //
+            writeItem(x, m.textBox_下一句快速鍵.Name, m.textBox_下一句快速鍵.Text); //
+            writeItem(x, m.textBox_文字大小.Name, m.textBox_文字大小.Text); //
+            writeItem(x, m.textBox_朗讀速度.Name, m.textBox_朗讀速度.Text); //
+            writeItem(x, m.textBox_聲音大小.Name, m.textBox_聲音大小.Text); //
+            writeItem(x, m.textBox_背景圖.Name, m.textBox_背景圖.Text); //
+            writeItem(x, m.textBox_外框寬度.Name, m.textBox_外框寬度.Text); //
+            writeItem(x, m.textBox_外框_羽化.Name, m.textBox_外框_羽化.Text); //
+            writeItem(x, m.textBox_字幕最大寬度.Name, m.textBox_字幕最大寬度.Text); //
             //
-            writeItem(X, m.color_文字顏色.Name, getColor(m.color_文字顏色.SelectedColor));//
-            writeItem(X, m.color_底色.Name, getColor(m.color_底色.SelectedColor));//
-            writeItem(X, m.color_前景色.Name, getColor(m.color_前景色.SelectedColor));//
-            writeItem(X, m.color_外框顏色.Name, getColor(m.color_外框顏色.SelectedColor));//
+            writeItem(x, m.color_文字顏色.Name, getColor(m.color_文字顏色.SelectedColor)); //
+            writeItem(x, m.color_底色.Name, getColor(m.color_底色.SelectedColor)); //
+            writeItem(x, m.color_前景色.Name, getColor(m.color_前景色.SelectedColor)); //
+            writeItem(x, m.color_外框顏色.Name, getColor(m.color_外框顏色.SelectedColor)); //
 
             //
             if (m.radio_左.IsChecked.Value) {
-                writeItem(X, "radio_text_alignment", "l");
+                writeItem(x, "radio_text_alignment", "l");
             } else if (m.radio_中.IsChecked.Value) {
-                writeItem(X, "radio_text_alignment", "c");
+                writeItem(x, "radio_text_alignment", "c");
             } else if (m.radio_右.IsChecked.Value) {
-                writeItem(X, "radio_text_alignment", "r");
+                writeItem(x, "radio_text_alignment", "r");
             }
             //
-            writeItem(X, m.comboBox_字體.Name, m.comboBox_字體.Text);//
+            writeItem(x, m.comboBox_字體.Name, m.comboBox_字體.Text);//
 
             //
             /*
@@ -85,18 +83,18 @@ namespace InstantSubtitle {
             X.WriteEndElement();
             */
 
-            X.WriteEndElement();
+            x.WriteEndElement();
 
-            X.Flush();     //寫這行才會寫入檔案
-            X.Close();
+            x.Flush(); //寫這行才會寫入檔案
+            x.Close();
         }
 
 
         /// <summary>
-        /// 開啟程式時讀取上次設定 ( 0=讀取設定檔、1=恢復所有設定
+        /// 讀取設定 ( 0=讀取設定檔、1=復原所有設定
         /// </summary>
         /// <param name="type"></param>
-        public void fun_開啟程式時讀取上次設定(int type) {
+        public void LoadSettings(int type) {
 
             try {
 

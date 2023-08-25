@@ -2,6 +2,7 @@
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Media;
 using System.Net;
@@ -23,23 +24,29 @@ namespace InstantSubtitle {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
-
-            Adapter.Initialize();//多執行緒初始化
+            Adapter.Initialize(); //誇行緒存取，初始化
         }
 
+        /// <summary> 字幕視窗  </summary>
+        SubtitleWindow w; // 字幕視窗
+        /// <summary> 偵測鍵盤的視窗 </summary>
+        private KeyboardDetectionForm f;
 
-        W_print w;
+        /// <summary>  </summary>
         List<String> ar = new List<string>();
-        int nub = -1;
+        /// <summary> 當前字幕的 Flag </summary>
+        int currentSubtitleFlag = -1;
+        /// <summary>  </summary>
         private SpeechSynthesizer ssyer = new SpeechSynthesizer();
-        private Form1 f;
-        private bool boo_需要重新讀取資料 = true;
-        private Setting C_set;
-
-        public W_播放模式 w_播放模式;
-        int int_播放模式倒數 = 60;
+        /// <summary> 是否需要重新讀取資料 </summary>
+        private bool isDataReloadRequired = true;
+        /// <summary>  </summary>
+        private Setting setting;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void load_Loaded(object sender3, RoutedEventArgs e3) {
 
             //讓視窗可以拖動
@@ -49,11 +56,11 @@ namespace InstantSubtitle {
                 } catch { }
             });
 
-            w = new W_print(this);
-            f = new Form1(this);
+            w = new SubtitleWindow(this);
+            f = new KeyboardDetectionForm(this);
 
-            C_set = new Setting(this);
-            C_set.fun_開啟程式時讀取上次設定(0);
+            setting = new Setting(this);
+            setting.LoadSettings(0);
 
             f.Show();
             w.Show();
@@ -61,14 +68,14 @@ namespace InstantSubtitle {
             textBox_上一句快速鍵.IsReadOnly = true;
             textBox_下一句快速鍵.IsReadOnly = true;
 
-            event_選取顏色事件();
-            event_限制數字();
-            event_文字對齊事件();
-            event_更換字體();
-            event_插入空白行();
-            event_重新整理();
-            fun_套用設定();
-            event_右鍵選單();
+            InitSelectColor(); //初始化 選取顏色
+            InitLimitNumber(); //初始化 限制數字
+            InitTextAlign(); //初始化 文字對齊事件
+            InitChangeFont(); //初始化 更換字體
+            InitInsertBlankLine(); //初始化 插入空白行
+            InitRefresh(); //初始化 重新整理
+            ApplySettings(); //套用設定
+            InitRightClickMenu(); //初始化 右鍵選單
 
             try {//更換字體
                 w.lable_print.FontFamily = new FontFamily(comboBox_字體.Text);
@@ -85,13 +92,12 @@ namespace InstantSubtitle {
             textBox_分子.KeyDown += new System.Windows.Input.KeyEventHandler((object sender, System.Windows.Input.KeyEventArgs e) => { //載入網址
                 if (e.Key == (Key.Enter)) {
                     try {
-                        textBox_分子.Text = (C_set.TextBoxGetInt(textBox_分子, 1, 30000) - 1) + "";//音量     
+                        textBox_分子.Text = (setting.TextBoxGetInt(textBox_分子, 1, 30000) - 1) + "";//音量     
                         //textBox_分子.Text = (Int32.Parse(textBox_分子.Text) - 1) + "";
                         Play(1);
                     } catch { }
                 }
             });
-
 
 
             textBox_快速插入.KeyDown += new System.Windows.Input.KeyEventHandler((object sender, System.Windows.Input.KeyEventArgs e) => { //載入網址
@@ -106,30 +112,29 @@ namespace InstantSubtitle {
 
             //避免每次都重新讀取內容而浪費記憶體
             textbox_文字框.TextChanged += new EventHandler((object sender, EventArgs e) => {
-                boo_需要重新讀取資料 = true;
+                isDataReloadRequired = true;
             });
 
 
             //離開文字框、在文字框點擊enter時，儲存套用設定
-            List<TextBox> lis = new List<TextBox>();
-            lis.Add(textBox_文字大小);
-            lis.Add(textBox_朗讀速度);
-            lis.Add(textBox_聲音大小);
-            lis.Add(textBox_背景圖);
-            lis.Add(textBox_外框寬度);
-            lis.Add(textBox_外框_羽化);
-            lis.Add(textBox_字幕最大寬度);
-            for (int i = 0; i < lis.Count; i++) {
-                lis[i].KeyDown += new System.Windows.Input.KeyEventHandler((object sender, System.Windows.Input.KeyEventArgs e) => { //載入網址
+            List<TextBox> arTextBox = new List<TextBox>();
+            arTextBox.Add(textBox_文字大小);
+            arTextBox.Add(textBox_朗讀速度);
+            arTextBox.Add(textBox_聲音大小);
+            arTextBox.Add(textBox_背景圖);
+            arTextBox.Add(textBox_外框寬度);
+            arTextBox.Add(textBox_外框_羽化);
+            arTextBox.Add(textBox_字幕最大寬度);
+            for (int i = 0; i < arTextBox.Count; i++) {
+                arTextBox[i].KeyDown += new System.Windows.Input.KeyEventHandler((object sender, System.Windows.Input.KeyEventArgs e) => { //載入網址
                     if (e.Key == (Key.Enter))
-                        fun_套用設定();
+                        ApplySettings();
                 });
 
-                lis[i].LostKeyboardFocus += new KeyboardFocusChangedEventHandler((object sender, KeyboardFocusChangedEventArgs e) => {
-                    fun_套用設定();
+                arTextBox[i].LostKeyboardFocus += new KeyboardFocusChangedEventHandler((object sender, KeyboardFocusChangedEventArgs e) => {
+                    ApplySettings();
                 });
             }
-
 
             checkBox_顯示字幕.Click += new RoutedEventHandler((object sss, RoutedEventArgs e) => {
                 if (checkBox_顯示字幕.IsChecked.Value == false)
@@ -148,7 +153,7 @@ namespace InstantSubtitle {
                 if (saveFileDialog1.FileName != "") {
 
                     textBox_背景圖.Text = saveFileDialog1.FileName;
-                    fun_修改背景(this, textBox_背景圖.Text);
+                    SetBackground(this, textBox_背景圖.Text);
                 }
             });
 
@@ -157,8 +162,8 @@ namespace InstantSubtitle {
                 w.Topmost = false;//暫時取消視窗頂置
                 if (System.Windows.Forms.MessageBox.Show("確定要恢復所有設定？", "恢復設定",
                     System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
-                    C_set.fun_開啟程式時讀取上次設定(1);
-                    fun_套用設定();
+                    setting.LoadSettings(1);
+                    ApplySettings();
                 }
                 w.Topmost = true;
             });
@@ -171,53 +176,6 @@ namespace InstantSubtitle {
             };
 
 
-
-            var time_定時播放 = new System.Windows.Forms.Timer();
-            time_定時播放.Interval = 1000;
-            time_定時播放.Tick += (sender, e) => {
-                if (w_播放模式 != null && checkBox_播放模式_定時送出.IsChecked.Value) {
-                    lab_播放模式_倒數.Visibility = Visibility.Visible;
-
-                    if (int_播放模式倒數 < 0) {
-                        w_播放模式.fun_送出();
-                    }
-                    lab_播放模式_倒數.Content = "倒數：" + int_播放模式倒數;
-                    w_播放模式.lab_秒.Content = int_播放模式倒數 + "";
-                     int_播放模式倒數--;
-
-                } else {
-                    lab_播放模式_倒數.Visibility = Visibility.Collapsed;
-                }
-
-            };
-            time_定時播放.Start();
-
-
-            checkBox_播放模式_定時送出.Checked += (sender, e) => {
-                fun_播放模式_倒數重置();
-            };
-
-
-            but_開啟播放模式.Click += (sender, e) => {
-
-                if (w_播放模式 != null) {
-                    w_播放模式.Close();
-                }
-                w_播放模式 = new W_播放模式(this);
-                w_播放模式.Owner = this;
-                w_播放模式.Show();
-
-                //判斷是否可以換行
-                if (checkBox_播放模式_禁止換行.IsChecked.Value) {          
-                    w_播放模式.text_1.AcceptsReturn = false;
-                    w_播放模式.bool_禁止換行 = true;
-                } else {
-                    w_播放模式.text_1.AcceptsReturn = true;
-                    w_播放模式.bool_禁止換行 = false;
-                }
-
-                fun_播放模式_倒數重置();
-            };
 
 
             //不使用快速鍵
@@ -262,24 +220,13 @@ namespace InstantSubtitle {
                 try {
                     TabControl tabc = (TabControl)e.OriginalSource;
                     var tabItem = (TabItem)tabc.Items[tabc.SelectedIndex];
-                    fun_動畫((FrameworkElement)(tabItem.Content), 20, 0, "Y");
+                    RunAnimate((FrameworkElement)(tabItem.Content), 20, 0, "Y");
 
                 } catch { }
 
             };
 
-            checkBox_播放模式_禁止換行.Checked += (sender, e) => {
-                if (w_播放模式 != null) {
-                    w_播放模式. text_1.AcceptsReturn = false;
-                    w_播放模式.bool_禁止換行 = true;
-                }          
-            };
-             checkBox_播放模式_禁止換行.Unchecked += (sender, e) => {
-                if (w_播放模式 != null) {
-                    w_播放模式. text_1.AcceptsReturn = true;
-                    w_播放模式.bool_禁止換行 = false;
-                }          
-            };
+
         }
 
 
@@ -287,16 +234,22 @@ namespace InstantSubtitle {
         /// <summary>
         /// 
         /// </summary>
-        public void fun_播放模式_倒數重置() {
-            int xx = C_set.TextBoxGetInt(textBox_播放模式_定時送出, 1, 999);
-            int_播放模式倒數 = xx;
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void load_Closed(object sender, EventArgs e) {
+            setting.SaveSetting();
+            try {
+                w.Close();
+                f.Close();
+                ssyer.Dispose();
+            } catch { }
         }
 
 
         /// <summary>
         /// 
         /// </summary>
-        private void event_右鍵選單() {
+        private void InitRightClickMenu() {
 
             MenuItem propertyMenu = new MenuItem();
             propertyMenu.Header = "插入斷行符號";
@@ -346,7 +299,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 更換字體
         /// </summary>
-        private void event_更換字體() {
+        private void InitChangeFont() {
 
             //選取變更時。延遲一段時間在變更字體，不然會沒有效果
             comboBox_字體.SelectionChanged += (object sender, SelectionChangedEventArgs e) => {
@@ -370,10 +323,10 @@ namespace InstantSubtitle {
                 } catch { }
             };
 
-            //意思焦點
-            comboBox_字體.LostFocus += ( sender,  e) => {
+            //遺失焦點
+            comboBox_字體.LostFocus += (sender, e) => {
                 try {
-                        w.lable_print.FontFamily = new FontFamily(comboBox_字體.Text);
+                    w.lable_print.FontFamily = new FontFamily(comboBox_字體.Text);
                 } catch { }
             };
         }
@@ -382,7 +335,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 
         /// </summary>
-        private void event_重新整理() {
+        private void InitRefresh() {
 
             button_重新整理.Click += (object sender, RoutedEventArgs e) => {
                 String[] st = textbox_文字框.Text.Split('\n');
@@ -409,7 +362,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 
         /// </summary>
-        private void event_插入空白行() {
+        private void InitInsertBlankLine() {
 
             button_插入空白行.Click += (object sender, RoutedEventArgs e) => {
                 String[] st = textbox_文字框.Text.Split('\n');
@@ -438,16 +391,16 @@ namespace InstantSubtitle {
         /// <summary>
         /// 
         /// </summary>
-        private void fun_套用設定() {
+        private void ApplySettings() {
 
-            ssyer.Volume = C_set.TextBoxGetInt(textBox_聲音大小, 0, 100);//音量      
-            ssyer.Rate = C_set.TextBoxGetInt(textBox_朗讀速度, -10, 10);//速度      
-            w.lable_print.FontSize = C_set.TextBoxGetInt(textBox_文字大小, 1, 500);//文字大小
-            w.lable_print.StrokeThickness = C_set.TextBoxGetFloat(textBox_外框寬度, 0, 50);//寬度
-            w.BlurEffect_模糊.Radius = C_set.TextBoxGetFloat(textBox_外框_羽化, 0, 100);//寬度
+            ssyer.Volume = setting.TextBoxGetInt(textBox_聲音大小, 0, 100);//音量      
+            ssyer.Rate = setting.TextBoxGetInt(textBox_朗讀速度, -10, 10);//速度      
+            w.lable_print.FontSize = setting.TextBoxGetInt(textBox_文字大小, 1, 500);//文字大小
+            w.lable_print.StrokeThickness = setting.TextBoxGetFloat(textBox_外框寬度, 0, 50);//寬度
+            w.BlurEffect_模糊.Radius = setting.TextBoxGetFloat(textBox_外框_羽化, 0, 100);//寬度
 
-            w.Width = C_set.TextBoxGetInt(textBox_字幕最大寬度, 200, 4000);//寬度
-   
+            w.Width = setting.TextBoxGetInt(textBox_字幕最大寬度, 200, 4000);//寬度
+
             Color cc = color_文字顏色.SelectedColor;
             w.lable_print.Fill = new SolidColorBrush(Color.FromArgb(cc.A, cc.R, cc.G, cc.B));//文字顏色
 
@@ -460,7 +413,7 @@ namespace InstantSubtitle {
             Color cc4 = color_外框顏色.SelectedColor;
             w.lable_print.Stroke = new SolidColorBrush(Color.FromArgb(cc4.A, cc4.R, cc4.G, cc4.B));//文字顏色
 
-            fun_修改背景(this, textBox_背景圖.Text);
+            SetBackground(this, textBox_背景圖.Text);
 
             if (checkBox_顯示字幕.IsChecked.Value == false)
                 w.Visibility = System.Windows.Visibility.Collapsed;
@@ -483,7 +436,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 
         /// </summary>
-        private void event_文字對齊事件() {
+        private void InitTextAlign() {
 
             List<RadioButton> ar = new List<RadioButton>();
             ar.Add(radio_左);
@@ -512,7 +465,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 
         /// </summary>
-        private void event_選取顏色事件() {
+        private void InitSelectColor() {
             //
             //
             color_文字顏色.MouseUp += new MouseButtonEventHandler((object sender2, MouseButtonEventArgs e2) => {
@@ -570,7 +523,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 快速插入
         /// </summary>
-        public void QuickInsert(String ttt) {
+        public void QuickInsert(String str) {
 
             /*
             if (textBox_快速插入.Text.Replace(" ", "").Equals("") == true) {
@@ -591,30 +544,30 @@ namespace InstantSubtitle {
                 }
             }
 
-            int int_分子 = C_set.TextBoxGetInt(textBox_分子, 1, 30000);
+            int int_分子 = setting.TextBoxGetInt(textBox_分子, 1, 30000);
 
             if (int_分子 >= ar.Count) {
                 int_分子 = ar.Count;
-                ar.Add(ttt);
+                ar.Add(str);
             } else {
-                ar.Insert(int_分子, ttt);
+                ar.Insert(int_分子, str);
             }
 
             for (int i = 0; i < ar.Count; i++) {
                 sb.Append(ar[i] + "\n");
             }
 
-            nub = int_分子;
-            w.lable_print.Text = ar[nub].Replace("<br>", "\r\n");//顯示字幕
+            currentSubtitleFlag = int_分子;
+            w.lable_print.Text = ar[currentSubtitleFlag].Replace("<br>", "\r\n"); //顯示字幕
 
             textBox_分子.Text = (int_分子 + 1) + "";
             label_分母.Content = ar.Count;
             textbox_文字框.Text = sb.ToString();
 
-            boo_需要重新讀取資料 = false;
+            isDataReloadRequired = false;
 
             if (checkBox_播放聲音.IsChecked.Value) {
-                func_朗讀(ar[nub]);
+                TTS(ar[currentSubtitleFlag]);
             }
 
         }
@@ -623,7 +576,7 @@ namespace InstantSubtitle {
         /// <summary>
         /// 重新讀取內容
         /// </summary>
-        private void fun_整理() {
+        private void ReloadContent() {
 
             String[] st = textbox_文字框.Text.Split('\n');
             ar = new List<string>();
@@ -632,7 +585,7 @@ namespace InstantSubtitle {
             for (int i = 0; i < st.Length; i++) {
                 st[i] = st[i].Replace("\r", "");
 
-                if (st[i].Replace(" ", "").Equals("") == false) {//拿掉所有斷行
+                if (st[i].Replace(" ", "").Equals("") == false) { //拿掉所有斷行
                     String x = st[i].Replace("<br>", "\r\n");
                     ar.Add(x);
                     sb.Append(st[i] + "\n");
@@ -651,42 +604,42 @@ namespace InstantSubtitle {
         /// </summary>
         public void Play(int type) {
 
-            if (boo_需要重新讀取資料 == true) {
-                fun_整理();
-                boo_需要重新讀取資料 = false;
+            if (isDataReloadRequired == true) {
+                ReloadContent();
+                isDataReloadRequired = false;
             }
 
             //-------------------
             try {
-                nub = Int32.Parse(textBox_分子.Text) - 1;
+                currentSubtitleFlag = Int32.Parse(textBox_分子.Text) - 1;
             } catch {
-                textBox_分子.Text = nub + "";
+                textBox_分子.Text = currentSubtitleFlag + "";
             }
 
             if (type == 1)
-                nub++;
+                currentSubtitleFlag++;
             else
-                nub--;
+                currentSubtitleFlag--;
 
             if (ar.Count == 0)
                 return;
-            else if (nub >= ar.Count)
-                nub = 0;
-            else if (nub <= -1)
-                nub = ar.Count - 1;
+            else if (currentSubtitleFlag >= ar.Count)
+                currentSubtitleFlag = 0;
+            else if (currentSubtitleFlag <= -1)
+                currentSubtitleFlag = ar.Count - 1;
 
             //-------------------------
 
-            textBox_分子.Text = (nub + 1) + "";
+            textBox_分子.Text = (currentSubtitleFlag + 1) + "";
 
-            func_更新字幕(ar[nub]);//顯示字幕
+            UpdateSubtitle(ar[currentSubtitleFlag]);//顯示字幕
 
 
             if (checkBox_播放聲音.IsChecked.Value) {
-                func_朗讀(ar[nub]);
+                TTS(ar[currentSubtitleFlag]);
             }
 
-            if (nub % 10 == 0) {
+            if (currentSubtitleFlag % 10 == 0) {
                 GC.Collect();
             }
 
@@ -694,127 +647,126 @@ namespace InstantSubtitle {
 
 
         /// <summary>
-        /// 
+        /// 更新字幕
         /// </summary>
-        /// <param name="input_t"></param>
-        public void func_更新字幕(String input_t) {
+        /// <param name="str"></param>
+        public void UpdateSubtitle(String str) {
 
-            if (input_t.Trim().ToUpper() == "<NONE>") {
+            if (str.Trim().ToUpper() == "<NONE>") {
                 w.lable_print.Text = ""; //顯示字幕
                 this.Title = "";
                 return;
             }
 
-            w.lable_print.Text = input_t; //顯示字幕
+            w.lable_print.Text = str; //顯示字幕
 
-            this.Title = (nub + 1) + " / " + ar.Count;
+            this.Title = (currentSubtitleFlag + 1) + " / " + ar.Count;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="input_t"></param>
-        public void func_朗讀(String input_t) {
 
-            input_t = input_t.Replace("<br>", " , ");
-            input_t = input_t.Replace("<BR>", " , ");
-            input_t = input_t.Replace("<none>", " ");
-            input_t = input_t.Replace("<NONE>", " ");
+        /// <summary>
+        /// 朗讀
+        /// </summary>
+        /// <param name="str"></param>
+        public void TTS(String str) {
+
+            str = str.Replace("<br>", " , ");
+            str = str.Replace("<BR>", " , ");
+            str = str.Replace("<none>", " ");
+            str = str.Replace("<NONE>", " ");
 
             if (radio_Windows內建.IsChecked.Value) {
-                TTS_windows(input_t);
+                TTS_windows(str);
             }
 
             if (radio_Google.IsChecked.Value) {
-                TTS_google(input_t);
+                TTS_google(str);
             }
-
         }
-
 
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="input_t"></param>
-        public void TTS_windows(String input_t) {
+        /// <param name="str"></param>
+        public void TTS_windows(String str) {
             ssyer.SpeakAsyncCancelAll();//暫停目前的聲音
-            ssyer.SpeakAsync(input_t);//播放音效
+            ssyer.SpeakAsync(str);//播放音效
         }
-
 
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="input_t"></param>
-        private void TTS_google(String input_t) {
+        /// <param name="str"></param>
+        private void TTS_google(String str) {
 
             if (File.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "2.wav")) {
                 File.Delete(System.AppDomain.CurrentDomain.BaseDirectory + "2.wav");
             }
 
-            input_t = Uri.EscapeDataString(input_t);//編碼成網址
-            String url = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=" + input_t + "&tl=zh";
+            str = Uri.EscapeDataString(str);//編碼成網址
+            String url = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=" + str + "&tl=zh";
 
             WebClient myWebClient = new WebClient();
-            myWebClient.DownloadFile(url, "1.mp3");
+            myWebClient.DownloadFileAsync(new Uri(url), "1.mp3");
 
-            ConvertMp3ToWav("1.mp3", "1.wav");
+            myWebClient.DownloadFileCompleted += (object sender, System.ComponentModel.AsyncCompletedEventArgs e) => {
 
-            System.Diagnostics.Process Info = new System.Diagnostics.Process();
-            Info.StartInfo.FileName = System.AppDomain.CurrentDomain.BaseDirectory + "soundstretch.exe"; //要啟動的應用程式
-            Info.StartInfo.Arguments = $"\"{System.AppDomain.CurrentDomain.BaseDirectory + "1.wav"}\" " +
-                                       $"\"{System.AppDomain.CurrentDomain.BaseDirectory + "2.wav"}\" " +
-                                       "-tempo=80"; //該應用程式的指令
+                try {
+                    ConvertMp3ToWav("1.mp3", "1.wav");
 
-            Info.Start();
-            Info.WaitForExit();
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.FileName = System.AppDomain.CurrentDomain.BaseDirectory + "soundstretch.exe"; //要啟動的應用程式
+                    startInfo.Arguments = $"\"{System.AppDomain.CurrentDomain.BaseDirectory + "1.wav"}\" " +
+                                               $"\"{System.AppDomain.CurrentDomain.BaseDirectory + "2.wav"}\" " +
+                                               "-tempo=80"; //該應用程式的指令
 
-            SoundPlayer sp = new SoundPlayer(System.AppDomain.CurrentDomain.BaseDirectory + "1.mp3");
-            sp.Play();
-            sp.Dispose();
+                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    Process process = Process.Start(startInfo);
+                    process.WaitForExit();
+                    process.Dispose();
 
-            Info.Dispose();
+                    SoundPlayer sp = new SoundPlayer(System.AppDomain.CurrentDomain.BaseDirectory + "2.wav");
+                    sp.Play();
+                    sp.Dispose();
+                } catch (Exception ex) { }
+                
+            };
         }
+
 
 
         /// <summary>
         /// MP3轉WAV
         /// </summary>
-        /// <param name="_inPath_"></param>
-        /// <param name="_outPath_"></param>
-        private void ConvertMp3ToWav(string _inPath_, string _outPath_) {
-            using (Mp3FileReader mp3 = new Mp3FileReader(_inPath_)) {
+        /// <param name="inPath"></param>
+        /// <param name="outPath"></param>
+        private void ConvertMp3ToWav(string inPath, string outPath) {
+            using (Mp3FileReader mp3 = new Mp3FileReader(inPath)) {
                 using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(mp3)) {
-                    WaveFileWriter.CreateWaveFile(_outPath_, pcm);
+                    WaveFileWriter.CreateWaveFile(outPath, pcm);
                 }
             }
         }
 
 
-
-
-
         /// <summary>
         /// 修改背景
         /// </summary>
-        public void fun_修改背景(Window w, String u) {
+        public void SetBackground(Window w, String path) {
 
-            if (u.ToUpper().Equals("DEFAULT")) {
-                u = System.Windows.Forms.Application.StartupPath + "/data/Background.jpg";
+            if (path.ToUpper().Equals("DEFAULT")) {
+                path = System.Windows.Forms.Application.StartupPath + "/data/Background.jpg";
             }
-
             try {
-                w.Background = new ImageBrush
-                {
-                    ImageSource = new BitmapImage(new Uri(u)),
+                w.Background = new ImageBrush {
+                    ImageSource = new BitmapImage(new Uri(path)),
                     Stretch = Stretch.UniformToFill,
                     TileMode = TileMode.None,
 
                 };
             } catch { }
-
         }
 
 
@@ -822,11 +774,9 @@ namespace InstantSubtitle {
         /// <summary>
         /// 限制文字框只能輸入數字。要註冊新的物件在這裡修改
         /// </summary>
-        private void event_限制數字(List<System.Windows.Controls.TextBox> tex) {
+        private void LimitNumber(List<System.Windows.Controls.TextBox> tex) {
 
-            var fun_限制數字_down = new Action<object, System.Windows.Input.KeyEventArgs>(
-            (object sender, System.Windows.Input.KeyEventArgs e) => {
-
+            var funcDown = new Action<object, System.Windows.Input.KeyEventArgs>((object sender, System.Windows.Input.KeyEventArgs e) => {
                 if ((e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) ||
                 (e.Key >= Key.D0 && e.Key <= Key.D9) ||
                 e.Key == Key.Back ||
@@ -837,13 +787,10 @@ namespace InstantSubtitle {
                 } else {
                     e.Handled = true;
                 }
-
             });
 
-            var fun_限制數字_Changed = new Action<object, TextChangedEventArgs>(
-            (object sender, TextChangedEventArgs e) => {
-
-                //屏蔽中文輸入和非法字符粘貼輸入
+            var funcChanged = new Action<object, TextChangedEventArgs>((object sender, TextChangedEventArgs e) => {
+                //遮蔽中文輸入和非法字符黏貼輸入
                 System.Windows.Controls.TextBox textBox = sender as System.Windows.Controls.TextBox;
                 TextChange[] change = new TextChange[e.Changes.Count];
                 e.Changes.CopyTo(change, 0);
@@ -856,43 +803,39 @@ namespace InstantSubtitle {
                         textBox.Select(offset, 0);
                     }
                 }
-
             });
 
-
-
             for (int i = 0; i < tex.Count; i++) {
-                tex[i].KeyDown += new System.Windows.Input.KeyEventHandler(fun_限制數字_down);
-                tex[i].TextChanged += new System.Windows.Controls.TextChangedEventHandler(fun_限制數字_Changed);
+                tex[i].KeyDown += new System.Windows.Input.KeyEventHandler(funcDown);
+                tex[i].TextChanged += new System.Windows.Controls.TextChangedEventHandler(funcChanged);
             }
 
         }
-        private void event_限制數字() {
+        private void InitLimitNumber() {
             List<System.Windows.Controls.TextBox> tex = new List<System.Windows.Controls.TextBox>();
 
             tex.Add(textBox_分子);
             tex.Add(textBox_聲音大小);
             tex.Add(textBox_文字大小);
-            tex.Add(textBox_播放模式_定時送出);
 
-            event_限制數字(tex);
+            LimitNumber(tex);
         }
 
 
 
         /// <summary>
-        /// 
+        /// 執行動畫
         /// </summary>
         /// <param name="f"></param>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="s_移動方式"></param>
-        private void fun_動畫(FrameworkElement f, double from, double to, String s_移動方式) {
+        /// <param name="type"> X 或 Y </param>
+        private void RunAnimate(FrameworkElement f, double from, double to, String type) {
 
             if (f == null)
                 return;
 
-            s_移動方式 = s_移動方式.ToUpper();
+            type = type.ToUpper();
 
 
             //位移
@@ -910,7 +853,7 @@ namespace InstantSubtitle {
             growAnimation2.From = from;
             growAnimation2.To = to;
 
-            Storyboard.SetTargetProperty(growAnimation2, new PropertyPath("(FrameworkElement.RenderTransform).(TranslateTransform." + s_移動方式 + ")"));
+            Storyboard.SetTargetProperty(growAnimation2, new PropertyPath("(FrameworkElement.RenderTransform).(TranslateTransform." + type + ")"));
             Storyboard.SetTarget(growAnimation2, f);
 
             storyboard2.Children.Add(growAnimation2);
@@ -938,25 +881,6 @@ namespace InstantSubtitle {
             storyboard3.Children.Add(growAnimation3);
             storyboard3.Begin();
         }
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void load_Closed(object sender, EventArgs e) {
-            C_set.SaveSetting();
-            try {
-                w.Close();
-                f.Close();
-                ssyer.Dispose();
-            } catch { }
-
-        }
-
-
 
 
     }

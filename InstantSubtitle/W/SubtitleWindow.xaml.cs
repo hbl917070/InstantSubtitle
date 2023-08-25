@@ -10,7 +10,7 @@ namespace InstantSubtitle {
     /// <summary>
     /// W_print.xaml 的互動邏輯
     /// </summary>
-    public partial class W_print : Window {
+    public partial class SubtitleWindow : Window {
 
 
 
@@ -21,7 +21,7 @@ namespace InstantSubtitle {
 
         MainWindow m;
 
-        public W_print(MainWindow m) {
+        public SubtitleWindow(MainWindow m) {
             InitializeComponent();
 
             this.m = m;

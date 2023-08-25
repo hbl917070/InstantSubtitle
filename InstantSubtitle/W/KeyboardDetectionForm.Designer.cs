@@ -1,5 +1,5 @@
 ﻿namespace InstantSubtitle {
-    partial class Form1 {
+    partial class KeyboardDetectionForm {
         /// <summary>
         /// Required designer variable.
         /// </summary>

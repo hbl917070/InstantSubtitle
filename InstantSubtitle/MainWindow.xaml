@@ -13,7 +13,7 @@
         Closed="load_Closed"
         Foreground="White"
         ResizeMode="CanResizeWithGrip"
-        Icon="img/即時字幕.ico">
+        Icon="Img/即時字幕.ico">
 
     <Window.Resources>
         <CollectionViewSource x:Key="sysFonts"
@@ -133,7 +133,7 @@
                     <StackPanel>
                         <Image Height="25"
                                Width="25"
-                               Source="img/文字.png" />
+                               Source="Img/文字.png" />
                         <Label Content="文字"
                                Padding="0" />
                     </StackPanel>
@@ -227,21 +227,21 @@
 
                             <Image  Height="35"
                                     Width="35"
-                                    Source="img/重新整理.png"
+                                    Source="Img/重新整理.png"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center" />
 
                         </Button>
                         <Button x:Name="button_插入空白行"
                                 HorizontalAlignment="Left"
-                                ToolTip="在每一句話的中間都插入依據空白行"
+                                ToolTip="在每一句話的中間都插入一空白行"
                                 Width="50"
                                 Margin="5,0,0,0"
                                 Visibility="Collapsed">
 
                             <Image  Height="35"
                                     Width="35"
-                                    Source="img/插入空白行.png"
+                                    Source="Img/插入空白行.png"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center" />
 
@@ -289,7 +289,7 @@
                     <StackPanel>
                         <Image Height="25"
                                Width="25"
-                               Source="img/設定.png" />
+                               Source="Img/設定.png" />
                         <Label Content="設定"
                                Padding="0" />
                     </StackPanel>
@@ -601,7 +601,7 @@
                                             Width="35"
                                             Margin="-35,0,0,0"
                                             ToolTip="不使用快速鍵">
-                                        <Image Source="img/刪除.png"
+                                        <Image Source="Img/刪除.png"
                                                Height="25"
                                                Width="25"></Image>
                                     </Button>
@@ -625,7 +625,7 @@
                                             Width="35"
                                             Margin="-35,0,0,0"
                                             ToolTip="不使用快速鍵">
-                                        <Image Source="img/刪除.png"
+                                        <Image Source="Img/刪除.png"
                                                Height="25"
                                                Width="25"></Image>
                                     </Button>
@@ -688,7 +688,7 @@
                                                     Margin="0">
                                             <Image Height="28"
                                                    Width="28"
-                                                   Source="img/選擇背景.png"
+                                                   Source="Img/選擇背景.png"
                                                    Margin="3,1" />
                                             <Label x:Name="label"
                                                    Content="瀏覽"
@@ -723,7 +723,7 @@
                                 <Image Height="24"
                                        Width="24"
                                        Margin="3"
-                                       Source="img/恢復原廠設定.png" />
+                                       Source="Img/恢復原廠設定.png" />
                                 <Label  Content="恢復原廠設定"
                                         FontSize="18"
                                         VerticalContentAlignment="Center"
@@ -741,7 +741,7 @@
                                 <Image Height="24"
                                        Width="24"
                                        Margin="3"
-                                       Source="img/文字歸位.png" />
+                                       Source="Img/文字歸位.png" />
                                 <Label  Content="文字歸位"
                                         FontSize="18"
                                         VerticalContentAlignment="Center"
@@ -749,134 +749,6 @@
                                         Margin="5,0" />
                             </StackPanel>
                         </Button>
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-            <TabItem  Background="{DynamicResource sol_白40}"
-                      Padding="6,5"
-                      FontSize="18"
-                      UseLayoutRounding="False"
-                      RenderTransformOrigin="0.5,0.5"
-                      FontWeight="Bold"
-                      Visibility="Collapsed">
-                <TabItem.Header>
-                    <StackPanel>
-                        <Path Stretch="Fill"
-                              Fill="#FFFFFFFF"
-                              Data="F1 M 27.0777,12.1667L 5.08618,-0.530115L 5.08618,24.8635L 27.0777,12.1667 Z "
-                              Height="25"
-                              Width="25" />
-                        <Label Content="播放"
-                               Padding="0" />
-
-                    </StackPanel>
-                </TabItem.Header>
-
-                <TabItem.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleY="1"
-                                        ScaleX="1" />
-                        <SkewTransform AngleY="0"
-                                       AngleX="0" />
-                        <RotateTransform Angle="0" />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </TabItem.RenderTransform>
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="20">
-                        <Label Content="播放模式-設定"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"
-                               Foreground="{DynamicResource sol_白}"
-                               Background="{x:Null}"
-                               FontSize="26.667"
-                               Padding="0">
-                            <Label.Effect>
-                                <DropShadowEffect ShadowDepth="0" />
-                            </Label.Effect>
-                        </Label>
-                        <Button x:Name="but_開啟播放模式"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Margin="0,20"
-                                ToolTip="開啟播放模式的視窗"
-                                Height="35">
-
-                            <StackPanel Orientation="Horizontal">
-                                <Path Stretch="Fill"
-                                      Fill="#FFFFFFFF"
-                                      Data="F1 M 27.0777,12.1667L 5.08618,-0.530115L 5.08618,24.8635L 27.0777,12.1667 Z "
-                                      Height="19"
-                                      Width="19"
-                                      Margin="3" />
-                                <Label  Content="開啟播放模式"
-                                        FontSize="18"
-                                        VerticalContentAlignment="Center"
-                                        Padding="0"
-                                        Margin="5,0" />
-                            </StackPanel>
-
-                        </Button>
-
-                        <CheckBox x:Name="checkBox_播放模式_定時送出"
-                                  IsChecked="True"
-                                  Foreground="White"
-                                  Margin="0,3,0,0"
-                                  Height="35">
-                            <TextBlock Margin="12,0,0,0">定時送出</TextBlock>
-                        </CheckBox>
-
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,3,0,0">
-                            <Label Content="間隔　　"
-                                   Padding="0"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,5,0" />
-                            <TextBox x:Name="textBox_播放模式_定時送出"
-                                     Text="60"
-                                     ToolTip="開啟播放模式後，定時自動送出"
-                                     Height="35"
-                                     MinWidth="250" />
-                            <Label Content="秒"
-                                   Padding="0"
-                                   VerticalAlignment="Center"
-                                   Margin="5,0,0,0" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,3,0,0">
-                            <Label Content="字數上限"
-                                   Padding="0"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,5,0" />
-                            <TextBox x:Name="textBox_播放_字數上限"
-                                     Text="30"
-                                     ToolTip="半形=0.5個字、全型=1個字。不想用就打『9999』"
-                                     Height="35"
-                                     MinWidth="250" />
-                        </StackPanel>
-                        <Label x:Name="lab_播放模式_倒數"
-                               Content="倒數："
-                               Padding="0"
-                               VerticalAlignment="Center"
-                               Margin="0,3,0,0"
-                               Height="35"
-                               VerticalContentAlignment="Center" />
-                        <CheckBox x:Name="checkBox_播放模式_禁止換行"
-                                  IsChecked="True"
-                                  Foreground="White"
-                                  Margin="0,3,0,0"
-                                  Height="35"
-                                  ToolTip="啟用後在播放模式的輸入框就不會因為 Enter鍵 而換行">
-                            <TextBlock Margin="12,0,0,0"><Run Text="禁止輸入框換行" /></TextBlock>
-                        </CheckBox>
-                        <CheckBox x:Name="checkBox_播放模式_enter送出"
-                                  IsChecked="True"
-                                  Foreground="White"
-                                  Margin="0,3,0,0"
-                                  Height="35"
-                                  ToolTip="注意，【禁止換行必須啟】用才有效果">
-                            <TextBlock Margin="12,0,0,0"><Run Text="按下Enter直接送出（【禁止換行】必須打勾才有效果）" /></TextBlock>
-                        </CheckBox>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -891,7 +763,7 @@
                     <StackPanel>
                         <Image  Height="25"
                                 Width="25"
-                                Source="img/說明.png" />
+                                Source="Img/說明.png" />
                         <Label Content="關於"
                                Padding="0" />
                     </StackPanel>
@@ -976,6 +848,7 @@
                     </StackPanel>
                 </Border>
             </TabItem>
+
         </TabControl>
 
     </Border>

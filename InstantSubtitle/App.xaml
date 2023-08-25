@@ -6,13 +6,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
-                <ResourceDictionary Source="style/style_property.xaml"/>
-                <ResourceDictionary Source="style/style_1.xaml"/>
-                
-                <ResourceDictionary Source="style/style_button.xaml"/>
-                <ResourceDictionary Source="style/Simple Styles.xaml"/>
-
-                <ResourceDictionary Source="style/style_window_播放模式.xaml" />
+                <ResourceDictionary Source="Style/Base.xaml"/>
+                <ResourceDictionary Source="Style/Button.xaml"/>
+                <ResourceDictionary Source="Style/Select.xaml"/>
                 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

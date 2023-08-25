@@ -9,6 +9,23 @@
 
     <!-- 資源字典項目應在此處定義。 -->
 
+
+    <SolidColorBrush  x:Key="sol_白" Color="White"></SolidColorBrush>
+    <SolidColorBrush  x:Key="sol_白40" Color="#66FFFFFF"></SolidColorBrush>
+    <SolidColorBrush  x:Key="sol_白80" Color="#B2FFFFFF"></SolidColorBrush>
+
+    <SolidColorBrush  x:Key="sol_黑" Color="Black"></SolidColorBrush>
+    <SolidColorBrush  x:Key="sol_黑40" Color="#66000000"></SolidColorBrush>
+    <SolidColorBrush  x:Key="sol_黑60" Color="#99000000"></SolidColorBrush>
+
+    <SolidColorBrush  x:Key="sol_淺藍" Color="#FF4BC8FF"></SolidColorBrush>
+    <SolidColorBrush  x:Key="sol_淺藍40" Color="#664BC8FF"></SolidColorBrush>
+
+    <SolidColorBrush  x:Key="sol_淺綠" Color="#FF64FF4B"></SolidColorBrush>
+    <SolidColorBrush  x:Key="sol_淺綠40" Color="#6664FF4B"></SolidColorBrush>
+
+
+
     <Style TargetType="{x:Type GridViewColumnHeader}">
         <Setter Property="Background"
                 Value="{StaticResource sol_白40}" />
@@ -89,12 +106,13 @@
         <Setter Property="TextWrapping"
                 Value="NoWrap" />
         <!---->
-		<Setter Property="VerticalContentAlignment" Value="Center"/><!--垂直-->
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <!--垂直-->
         <Setter Property="VerticalAlignment"
                 Value="Stretch" />
         <!---->
-		<Setter Property="Padding" Value="1,1,1,1"/>
-	</Style>
+        <Setter Property="Padding" Value="1,1,1,1"/>
+    </Style>
 
 
 

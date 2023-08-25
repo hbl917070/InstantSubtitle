@@ -53,7 +53,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>img\即時字幕.ico</ApplicationIcon>
+    <ApplicationIcon>Img\即時字幕.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ColorPicker">
@@ -93,20 +93,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="cs\Adapter.cs" />
-    <Compile Include="cs\Setting.cs" />
-    <Compile Include="w\Form1.cs">
+    <Compile Include="Cs\Adapter.cs" />
+    <Compile Include="Cs\Setting.cs" />
+    <Compile Include="W\KeyboardDetectionForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="w\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="W\KeyboardDetectionForm.Designer.cs">
+      <DependentUpon>KeyboardDetectionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="cs\OutlinedTextBlock.cs" />
-    <Compile Include="w\W_print.xaml.cs">
-      <DependentUpon>W_print.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="w\W_播放模式.xaml.cs">
-      <DependentUpon>W_播放模式.xaml</DependentUpon>
+    <Compile Include="Cs\OutlinedTextBlock.cs" />
+    <Compile Include="W\SubtitleWindow.xaml.cs">
+      <DependentUpon>SubtitleWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -120,31 +117,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="style\Simple Styles.xaml">
+    <Page Include="Style\Select.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="style\style_1.xaml">
+    <Page Include="Style\Base.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="style\style_button.xaml">
+    <Page Include="Style\Button.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="style\style_property.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="style\style_window_播放模式.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="w\W_print.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="w\W_播放模式.xaml">
+    <Page Include="W\SubtitleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,8 +148,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="w\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="W\KeyboardDetectionForm.resx">
+      <DependentUpon>KeyboardDetectionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -180,34 +165,34 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\設定.png" />
+    <Resource Include="Img\設定.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\文字.png" />
+    <Resource Include="Img\文字.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\說明.png" />
+    <Resource Include="Img\說明.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\恢復原廠設定.png" />
+    <Resource Include="Img\恢復原廠設定.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\選擇背景.png" />
+    <Resource Include="Img\選擇背景.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\文字歸位.png" />
+    <Resource Include="Img\文字歸位.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\插入空白行.png" />
+    <Resource Include="Img\插入空白行.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\重新整理.png" />
+    <Resource Include="Img\重新整理.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\刪除.png" />
+    <Resource Include="Img\刪除.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\即時字幕.ico" />
+    <Resource Include="Img\即時字幕.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
